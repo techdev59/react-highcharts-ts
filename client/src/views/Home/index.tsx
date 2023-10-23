@@ -3,7 +3,7 @@ import TradingChart from "../../components/TradingChart";
 
 const Home = () => {
   const [currency, setCurrency] = useState<string>("BTCUSDT");
-  const [interval, setInterval] = useState<string>("1d");
+  const [interval, setInterval] = useState<string>("1m");
   return <TradingChart currency={currency} interval={interval} />;
 };
 

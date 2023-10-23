@@ -22,11 +22,5 @@ const bRest = new api.BinanceRest({
 });
 const binanceWS = new api.BinanceWS(true);
 const bws = binanceWS.onKline("BTCUSDT", "1m", (data: any) => {
-  io.sockets.emit("KLINE", {
-    time: Math.round(data.kline.startTime / 1000),
-    open: parseFloat(data.kline.open),
-    high: parseFloat(data.kline.high),
-    low: parseFloat(data.kline.low),
-    close: parseFloat(data.kline.close),
-  });
+  io.sockets.emit("KLINE", data.kline);
 });
