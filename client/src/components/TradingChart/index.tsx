@@ -4,7 +4,8 @@ import HighchartsReact, {
   HighchartsReactRefObject,
 } from "highcharts-react-official";
 import { useState, useRef, useEffect } from "react";
-
+import Indicators from "highcharts/indicators/indicators";
+Indicators(Highcharts);
 function TradingChart({
   currency,
   interval,
@@ -24,7 +25,7 @@ function TradingChart({
     socket.onmessage = (event) => {
       const incomingData = JSON.parse(event.data);
       const newDataPoint = [
-        parseFloat(incomingData.k.t),
+        incomingData.k.t,
         parseFloat(incomingData.k.o),
         parseFloat(incomingData.k.h),
         parseFloat(incomingData.k.l),
@@ -51,8 +52,13 @@ function TradingChart({
         title: {
           text: currency,
         },
-        accessibility: {
-          enabled: false,
+        navigation: {
+          bindingsClassName: "tools-container", // informs Stock Tools where to look for HTML elements for adding technical indicators, annotations etc.
+        },
+        stockTools: {
+          gui: {
+            enabled: true, // disable the built-in toolbar
+          },
         },
         series: [
           {
@@ -77,6 +83,13 @@ function TradingChart({
                 ["month", [1, 3, 6]],
                 ["year", null],
               ],
+            },
+          },
+          {
+            type: "sma",
+            linkedTo: ":previous",
+            params: {
+              period: 14,
             },
           },
         ],
