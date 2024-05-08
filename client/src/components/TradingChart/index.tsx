@@ -1,3 +1,4 @@
+// Import necessary dependencies
 import { useGetKlinesQuery } from "../../services/tradingServices";
 import Highcharts from "highcharts/highstock";
 import HighchartsReact, {
@@ -5,7 +6,11 @@ import HighchartsReact, {
 } from "highcharts-react-official";
 import { useState, useRef, useEffect } from "react";
 import Indicators from "highcharts/indicators/indicators";
+
+// Initialize Highcharts indicators
 Indicators(Highcharts);
+
+// The TradingChart component
 function TradingChart({
   currency,
   interval,
@@ -13,15 +18,22 @@ function TradingChart({
   currency: string;
   interval: string;
 }) {
+  // Fetch kline data using the useGetKlinesQuery hook
   const { isLoading, isError, data } = useGetKlinesQuery([currency, interval]);
+
+  // Create a reference to the Highcharts chart
   const chartRef = useRef<HighchartsReactRefObject>(null);
+
+  // State to hold the chart options
   const [chartOptions, setChartOptions] = useState<any>();
 
+  // Set up a WebSocket connection to receive real-time data updates
   useEffect(() => {
     const socket = new WebSocket(
       "wss://stream.binance.com:9443/ws/btcusdt@kline_1s"
     );
 
+    // Handle incoming WebSocket messages
     socket.onmessage = (event) => {
       const incomingData = JSON.parse(event.data);
       const newDataPoint = [
@@ -43,9 +55,11 @@ function TradingChart({
       });
     };
 
+    // Clean up the WebSocket connection on component unmount
     return () => socket.close();
   }, []);
 
+  // Update the chart options when the data changes
   useEffect(() => {
     if (data) {
       setChartOptions({
@@ -97,6 +111,7 @@ function TradingChart({
     }
   }, [data]);
 
+  // Render the chart if data is available, or display loading/error messages
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -122,4 +137,5 @@ function TradingChart({
   );
 }
 
+// Export of the TradingChart component
 export default TradingChart;
